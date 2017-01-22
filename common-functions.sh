@@ -25,7 +25,8 @@ env_vars_in_file () {
     echo "FROM_SEPARATOR   : ${FROM_SEPARATOR}"
     echo "TO_SEPARATOR     : ${TO_SEPARATOR}"
     echo -e ".......................................\n"
-    set -o verbose pipefail notify xtrace
+    set -u
+    set -o pipefail xtrace
   fi
 
   if [[ -z "${PREFIX}" || -z "${DEST_FILE}" ]]; then
@@ -48,8 +49,9 @@ env_vars_in_file () {
     VAR_VALUE=`echo "${ENV_VAR}" | sed -r "s/.*=//"`
 
     if `egrep -q "(^|^#)${VAR_NAME}=.*" ${DEST_FILE}`; then
-      $OVERRIDE =~ true && sed -r -i "s/(^|^#)${VAR_NAME}=.*/${VAR_NAME}=${VAR_VALUE}/g" ${DEST_FILE}
-      $OVERRIDE =~ false && sed -r -i "s/^#${VAR_NAME}=.*/${VAR_NAME}=${VAR_VALUE}/g" ${DEST_FILE}
+      # Not use '+' symbol neither in VAR_NAME nor in VAR_VALUE
+      $OVERRIDE =~ true && sed -r -i "s+(^|^#)${VAR_NAME}=.*+${VAR_NAME}=${VAR_VALUE}+g" ${DEST_FILE}
+      $OVERRIDE =~ false && sed -r -i "s+^#${VAR_NAME}=.*+${VAR_NAME}=${VAR_VALUE}+g" ${DEST_FILE}
     else
       # If VAR name not found in file, insert it at end of file
       echo "${VAR_NAME}=${VAR_VALUE}" >> ${DEST_FILE}
