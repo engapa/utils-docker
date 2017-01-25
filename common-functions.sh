@@ -13,7 +13,8 @@ env_vars_in_file () {
   OVERRIDE=${5:-${OVERRIDE:-true}}            # Example: Override the variable in target file when it isn't in comment lines.
   FROM_SEPARATOR=${6:-${FROM_SEPARATOR:-'_'}} # Example: Locate this character for splitting, default to '_' .
   TO_SEPARATOR=${7:-${TO_SEPARATOR:-'.'}}     # Example: Convert FROM_SEPARATOR character/s into this, default to '.' .
-  DEBUG=${8:-${DEBUG:-false}}                 # Activate debug mode
+  LOWER=${8:-${TO_LOW:-true}}                # Convert to low characters RABBIT_PEPE-->pepe. If false preserve characters RABBIT_size_isEnabled-->size.isEnabled
+  DEBUG=${9:-${DEBUG:-false}}                 # Activate debug mode
 
   if $DEBUG ; then
     echo -e "Writing environment variables to file :\n"
@@ -24,6 +25,7 @@ env_vars_in_file () {
     echo "OVERRIDE         : ${OVERRIDE}"
     echo "FROM_SEPARATOR   : ${FROM_SEPARATOR}"
     echo "TO_SEPARATOR     : ${TO_SEPARATOR}"
+    echo "LOWER            : ${LOWER}"
     echo -e ".......................................\n"
     set -u
     set -o pipefail xtrace
@@ -33,8 +35,9 @@ env_vars_in_file () {
     echo 'PREFIX and DEST_FILE are required values :-(' && exit 1;
   fi
 
-  if $CREATE_FILE && [ ! -f $DEST_FILE ]; then
-    >>$DEST_FILE
+  if [ ! -f $DEST_FILE ]; then
+    $CREATE_FILE && >>$DEST_FILE
+    [ ! $CREATE_FILE ] && { echo "Not found file ${DEST_FILE} :-("; exit 1; }
   fi
 
   for ENV_VAR in `env | grep "^${PREFIX}"`; do
@@ -46,7 +49,7 @@ env_vars_in_file () {
       continue
     fi
 
-    VAR_NAME=`echo "${ENV_VAR_NAME}" | sed -r "s/${PREFIX}//" | tr '[:upper:]' '[:lower:]' | tr ${FROM_SEPARATOR} ${TO_SEPARATOR}`
+    VAR_NAME=`echo "${ENV_VAR_NAME}" | sed -r "s/${PREFIX}//" | $LOWER && tr '[:upper:]' '[:lower:]' | tr ${FROM_SEPARATOR} ${TO_SEPARATOR}`
     VAR_VALUE=`echo "${ENV_VAR}" | sed -r "s/.*=//"`
 
     if `egrep -q "(^|^#)${VAR_NAME}=.*" ${DEST_FILE}`; then
