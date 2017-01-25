@@ -50,6 +50,7 @@ CREATE_FILE      : true
 OVERRIDE         : true
 FROM_SEPARATOR   : _
 TO_SEPARATOR     : .
+LOWER            : true
 .......................................
 
 [  ADD   ] : SERVER_BIND_IP --> bind.ip=192.168.10.10
@@ -83,6 +84,7 @@ CREATE_FILE      : true
 OVERRIDE         : true
 FROM_SEPARATOR   : _
 TO_SEPARATOR     : .
+LOWER            : true
 .......................................
 
 [OVERRIDE] : SERVER_BIND_IP --> bind.ip=0.0.0.0

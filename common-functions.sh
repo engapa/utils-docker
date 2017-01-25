@@ -13,7 +13,7 @@ env_vars_in_file () {
   OVERRIDE=${5:-${OVERRIDE:-true}}            # Example: Override the variable in target file when it isn't in comment lines.
   FROM_SEPARATOR=${6:-${FROM_SEPARATOR:-'_'}} # Example: Locate this character for splitting, default to '_' .
   TO_SEPARATOR=${7:-${TO_SEPARATOR:-'.'}}     # Example: Convert FROM_SEPARATOR character/s into this, default to '.' .
-  LOWER=${8:-${TO_LOW:-true}}                # Convert to low characters RABBIT_PEPE-->pepe. If false preserve characters RABBIT_size_isEnabled-->size.isEnabled
+  LOWER=${8:-${LOWER:-true}}                  # Convert to low characters RABBIT_PEPE-->pepe. If false preserve original characters RABBIT_size_isEnabled-->size.isEnabled
   DEBUG=${9:-${DEBUG:-false}}                 # Activate debug mode
 
   if $DEBUG ; then
@@ -49,7 +49,11 @@ env_vars_in_file () {
       continue
     fi
 
-    VAR_NAME=`echo "${ENV_VAR_NAME}" | sed -r "s/${PREFIX}//" | $LOWER && tr '[:upper:]' '[:lower:]' | tr ${FROM_SEPARATOR} ${TO_SEPARATOR}`
+    VAR_NAME=`echo "${ENV_VAR_NAME}" | sed -r "s/${PREFIX}//" | tr ${FROM_SEPARATOR} ${TO_SEPARATOR}`
+    if $LOWER; then
+      VAR_NAME=`echo "${VAR_NAME}" | tr '[:upper:]' '[:lower:]'`
+    fi
+
     VAR_VALUE=`echo "${ENV_VAR}" | sed -r "s/.*=//"`
 
     if `egrep -q "(^|^#)${VAR_NAME}=.*" ${DEST_FILE}`; then
