@@ -42,7 +42,7 @@ env_vars_in_file () {
     ENV_VAR_NAME=`echo "${ENV_VAR}" | sed -r "s/=(.*)//"`
 
     if [ ! -z "${EXCLUSIONS}" ] && `echo "${ENV_VAR_NAME}" | egrep -q "${EXCLUSIONS}"`; then
-      $DEBUG =~ true && echo "[EXCLUDED] : ${ENV_VAR_NAME}"
+      $DEBUG && echo "[EXCLUDED] : ${ENV_VAR_NAME}"
       continue
     fi
 
