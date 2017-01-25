@@ -51,15 +51,17 @@ env_vars_in_file () {
 
     if `egrep -q "(^|^#)${VAR_NAME}=.*" ${DEST_FILE}`; then
       # Not use '+' symbol neither in VAR_NAME nor in VAR_VALUE
-      $OVERRIDE && sed -r -i "s+(^|^#)${VAR_NAME}=.*+${VAR_NAME}=${VAR_VALUE}+g" ${DEST_FILE} \
-        && $DEBUG && echo "[OVERRIDE] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
-      [ ! $OVERRIDE ] && sed -r -i "s+^#${VAR_NAME}=.*+${VAR_NAME}=${VAR_VALUE}+g" ${DEST_FILE} \
-        && $DEBUG && echo "[ UPDATE ] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
+      if $OVERRIDE; then
+        sed -r -i "s+(^|^#)${VAR_NAME}=.*+${VAR_NAME}=${VAR_VALUE}+g" ${DEST_FILE} \
+          && $DEBUG && echo "[OVERRIDE] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
+      else
+        sed -r -i "s+^#${VAR_NAME}=.*+${VAR_NAME}=${VAR_VALUE}+g" ${DEST_FILE} \
+          && $DEBUG && echo "[ UPDATE ] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
+      fi
     else
       # If VAR name not found in file, insert it at end of file
       echo "${VAR_NAME}=${VAR_VALUE}" >> ${DEST_FILE}
       $DEBUG && echo "[  ADD   ] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
     fi
   done
-
 }
