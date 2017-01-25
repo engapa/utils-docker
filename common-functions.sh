@@ -42,6 +42,7 @@ env_vars_in_file () {
     ENV_VAR_NAME=`echo "${ENV_VAR}" | sed -r "s/=(.*)//"`
 
     if [ ! -z "${EXCLUSIONS}" ] && `echo "${ENV_VAR_NAME}" | egrep -q "${EXCLUSIONS}"`; then
+      $DEBUG =~ true && echo "[EXCLUDED] : ${ENV_VAR_NAME}"
       continue
     fi
 
@@ -50,11 +51,14 @@ env_vars_in_file () {
 
     if `egrep -q "(^|^#)${VAR_NAME}=.*" ${DEST_FILE}`; then
       # Not use '+' symbol neither in VAR_NAME nor in VAR_VALUE
-      $OVERRIDE =~ true && sed -r -i "s+(^|^#)${VAR_NAME}=.*+${VAR_NAME}=${VAR_VALUE}+g" ${DEST_FILE}
-      $OVERRIDE =~ false && sed -r -i "s+^#${VAR_NAME}=.*+${VAR_NAME}=${VAR_VALUE}+g" ${DEST_FILE}
+      $OVERRIDE =~ true && sed -r -i "s+(^|^#)${VAR_NAME}=.*+${VAR_NAME}=${VAR_VALUE}+g" ${DEST_FILE} \
+        && $DEBUG =~ true && echo "[OVERRIDE] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
+      $OVERRIDE =~ false && sed -r -i "s+^#${VAR_NAME}=.*+${VAR_NAME}=${VAR_VALUE}+g" ${DEST_FILE} \
+        && $DEBUG =~ true && echo "[ UPDATE ] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
     else
       # If VAR name not found in file, insert it at end of file
       echo "${VAR_NAME}=${VAR_VALUE}" >> ${DEST_FILE}
+      $DEBUG =~ true && echo "[  ADD   ] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
     fi
   done
 
