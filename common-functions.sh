@@ -40,6 +40,10 @@ env_vars_in_file () {
     [ ! $CREATE_FILE ] && { echo "Not found file ${DEST_FILE} :-("; exit 1; }
   fi
 
+  IFS='
+'
+  set -f
+
   for ENV_VAR in `env | grep "^${PREFIX}"`; do
 
     ENV_VAR_NAME=`echo "${ENV_VAR}" | sed -r "s/=(.*)//"`
@@ -71,4 +75,6 @@ env_vars_in_file () {
       $DEBUG && echo "[  ADD   ] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
     fi
   done
+  set +f
+  unset IFS
 }
