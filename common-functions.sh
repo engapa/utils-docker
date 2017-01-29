@@ -3,6 +3,11 @@
 ## Util functions
 ## Author : Enrique Garcia <engapa@gmail.com>
 
+log() {
+  LOG_LEVEL=${LOG_LEVEL:-INFO}
+  echo "[${LOG_LEVEL}] [$(date +%F_%H:%M:%S)] - " $@
+}
+
 # Write environment variables into a file
 env_vars_in_file () {
 
@@ -29,6 +34,7 @@ env_vars_in_file () {
     echo -e ".......................................\n"
     set -u
     set -o pipefail xtrace
+    LOG_LEVEL="DEBUG"
   fi
 
   if [[ -z "${PREFIX}" || -z "${DEST_FILE}" ]]; then
@@ -49,7 +55,7 @@ env_vars_in_file () {
     ENV_VAR_NAME=`echo "${ENV_VAR}" | sed -r "s/=(.*)//"`
 
     if [ ! -z "${EXCLUSIONS}" ] && `echo "${ENV_VAR_NAME}" | egrep -q "${EXCLUSIONS}"`; then
-      $DEBUG && echo "[EXCLUDED] : ${ENV_VAR_NAME}"
+      $DEBUG && log "[EXCLUDED] : ${ENV_VAR_NAME}"
       continue
     fi
 
@@ -64,15 +70,15 @@ env_vars_in_file () {
       # Not use '+' symbol neither in VAR_NAME nor in VAR_VALUE
       if $OVERRIDE; then
         sed -r -i "s+(^|^#)${VAR_NAME}=.*+${VAR_NAME}=${VAR_VALUE}+g" ${DEST_FILE} \
-          && $DEBUG && echo "[OVERRIDE] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
+          && $DEBUG && log "[OVERRIDE] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
       else
         sed -r -i "s+^#${VAR_NAME}=.*+${VAR_NAME}=${VAR_VALUE}+g" ${DEST_FILE} \
-          && $DEBUG && echo "[ UPDATE ] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
+          && $DEBUG && log "[ UPDATE ] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
       fi
     else
       # If VAR name not found in file, insert it at end of file
       echo "${VAR_NAME}=${VAR_VALUE}" >> ${DEST_FILE}
-      $DEBUG && echo "[  ADD   ] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
+      $DEBUG && log "[  ADD   ] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
     fi
   done
   set +f
