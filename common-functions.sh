@@ -10,7 +10,7 @@ log() {
 
 
 version_gt() {
- test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$1";
+ test "$(printf '%s\n' "$@" | sort -un | head -n 1)" != "$1";
 }
 
 # Write environment variables into a file
