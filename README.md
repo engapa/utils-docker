@@ -103,13 +103,6 @@ verify.skip=True
 `$ docker rm -f $(docker ps -q -f ancestor=c3cee6c14084)`
 `$ docker rmi c3cee6c14084`
 
-## [K8S](k8s.sh)
-
-### name_index_domain
-
-Utility to get basic information for StatefulSets or PetSets.
-
-Gets the name and domain of the hostname , and the index from a ordinal
 
 
 
