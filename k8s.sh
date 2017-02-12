@@ -13,7 +13,7 @@ name_index_domain() {
     NAME=${BASH_REMATCH[1]}
     ORD=${BASH_REMATCH[2]}
     INDEX=$((ORD+1))
-    local ARRAY=($NAME, $INDEX, $DOMAIN)
+    local ARRAY=($NAME $INDEX $DOMAIN)
     return "${ARRAY[@]}"
   else
     echo "Name of host doesn't match with pattern: (.*)-([0-9]+). Consider using PetSets or StatefulSets."
