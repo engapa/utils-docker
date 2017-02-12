@@ -8,6 +8,11 @@ log() {
   echo "[${LOG_LEVEL}] [$(date +%F_%H:%M:%S)] - " $@
 }
 
+
+version_gt() {
+ test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$1";
+}
+
 # Write environment variables into a file
 env_vars_in_file () {
 
