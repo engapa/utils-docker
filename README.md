@@ -99,10 +99,18 @@ verify.skip=True
 ```
 
 
-> NOTE: Do not forget to remove test containers and image to avoid resource consumption on your host by typing :  
-`$ docker rm -f $(docker ps -q -f ancestor=c3cee6c14084)`  
+> NOTE: Do not forget to remove test containers and image to avoid resource consumption on your host by typing :
+`$ docker rm -f $(docker ps -q -f ancestor=c3cee6c14084)`
 `$ docker rmi c3cee6c14084`
 
-Hope this helps, :-)
+## [K8S](k8s.sh)
+
+### name_index_domain
+
+Utility to get basic information for StatefulSets or PetSets.
+
+Gets the name and domain of the hostname , and the index from a ordinal
+
+
 
 
