@@ -82,7 +82,7 @@ env_vars_in_file () {
       fi
     else
       # If VAR name not found in file, insert it at end of file
-      echo "${VAR_NAME}=${VAR_VALUE}" >> ${DEST_FILE}
+      echo -ne "\n${VAR_NAME}=${VAR_VALUE}" >> ${DEST_FILE}
       $DEBUG && log "[  ADD   ] : ${ENV_VAR_NAME} --> ${VAR_NAME}=${VAR_VALUE}"
     fi
   done
