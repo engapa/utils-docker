@@ -1,7 +1,7 @@
 # Utilities for Docker images
 Utilities for building docker images
 
-## [Common Functions](common_functions.sh)
+## [Common Functions](https://raw.githubusercontent.com/engapa/utils-docker/master/common-functions.sh)
 
 A collections of bash scripts to make easier the most common utilities in docker-image build time
 
