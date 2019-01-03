@@ -1,9 +1,15 @@
-# Utilities for Docker images
-Utilities for building docker images
+# Basic utilities within Docker images/containers
+[![Build status](https://circleci.com/gh/engapa/utils-docker/tree/master.svg?style=svg "Build status")](https://circleci.com/gh/engapa/utils-docker/tree/master)
+[![Docker Pulls](https://img.shields.io/docker/pulls/engapa/utils-docker.svg)](https://hub.docker.com/r/engapa/utils-docker/)
+[![Docker Layering](https://images.microbadger.com/badges/image/engapa/utils-docker.svg)](https://microbadger.com/images/engapa/utils-docker)
+[![Docker image version](https://images.microbadger.com/badges/version/engapa/utils-docker.svg)](https://microbadger.com/images/engapa/utils-docker)
+![OSS](https://badges.frapsoft.com/os/v1/open-source.svg?v=103 "We love OpenSource")
+
+Known utilities to use/build docker containers/images
 
 ## [Common Functions](https://raw.githubusercontent.com/engapa/utils-docker/master/common-functions.sh)
 
-A collections of bash scripts to make easier the most common utilities in docker-image build time
+A collection of bash functions to make easier common tasks
 
 ### env_vars_in_file
 
@@ -18,20 +24,15 @@ For instance, suppose you have these vars and want to write them into a file "/c
 The [Dockerfile](examples/Dockerfile) would be like this:
 
 ```bash
-FROM alpine
-
+...
 ENV SERVER_TIMEOUT=60 \
     SERVER_URL=https://mysite.com \
     SERVER_BIND_IP=192.168.10.10
-
-RUN apk add --no-cache --virtual .build-deps \
-      bash wget ca-certificates openssl
-
+...
 RUN ["wget", "https://raw.githubusercontent.com/engapa/utils-docker/master/common-functions.sh"]
 RUN . common-functions.sh \
     && PREFIX=SERVER_ DEST_FILE='/conf.properties' DEBUG=true env_vars_in_file
-
-#RUN apk del .build-deps
+...
 ```
 
 When we're building the Docker image we find out these lines in the output :
@@ -69,7 +70,7 @@ timeout=60
 url=https://mysite.com
 ```
 
-And finally, if you wanna change or add any more parameter then launch the container (or extended Dockerfile with 'ENV' entries) this way:
+And finally, if you want to change or add any more parameter then launch the container (or extended Dockerfile with 'ENV' entries) like this:
 
 ```bash
 $ docker run -e "SERVER_BIND_IP=0.0.0.0" -e "SERVER_VERIFY_SKIP=True" c3cee6c14084 \
@@ -103,7 +104,22 @@ verify.skip=True
 `$ docker rm -f $(docker ps -q -f ancestor=c3cee6c14084)`
 `$ docker rmi c3cee6c14084`
 
+## [GitHub Release](https://raw.githubusercontent.com/engapa/utils-docker/master/github.sh)
 
+If you wonder how to publish a release on github this utility is for you.
 
+### Publish a release on GitHub
 
+The `gh-release` function aims you to publish a release in GitHub.
+
+## All-in-One container
+
+If you prefer to use directly a docker container, for instance in your workflow pipelines we may have a step like this one:
+
+```bash
+$ docker run -it engapa/utils-docker:latest
+... Outputs all available functions ...
+$ docker run -it engapa/utils-docker:latest log Hello Enk
+[INFO] [2019-01-03_08:29:46] -  Hello Enk
+```
 
